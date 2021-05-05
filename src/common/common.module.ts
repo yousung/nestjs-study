@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
@@ -14,6 +15,10 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
       entities: ['dist/**/*.entity{.ts,.js}'],
       synchronize: true,
       namingStrategy: new SnakeNamingStrategy(),
+    }),
+    ConfigModule.forRoot({
+      envFilePath: ['.env'],
+      isGlobal: true,
     }),
   ],
 })
