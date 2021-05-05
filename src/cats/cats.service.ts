@@ -1,5 +1,6 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { v4 as uuidv4 } from 'uuid';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateCatDto } from './dto/create-cat.dto';
 import { UpdateCatDto } from './dto/update-cat.dto';
 import { Cat } from './entities/cat.entity';
@@ -8,44 +9,33 @@ import { Cat } from './entities/cat.entity';
 export class CatsService {
   private cats: Cat[] = [];
 
-  create(createCatDto: CreateCatDto): Cat {
-    const cat = { ...createCatDto, id: uuidv4() };
-    this.cats.push(cat);
-    return cat;
+  constructor(@InjectRepository(Cat) private catRepository: Repository<Cat>) {}
+
+  async create(createCatDto: CreateCatDto): Promise<Cat> {
+    return await this.catRepository.save(createCatDto);
   }
 
-  findAll(): Cat[] {
-    return this.cats;
+  findAll(): Promise<Cat[]> {
+    return this.catRepository.find();
   }
 
-  findOne(id: string): Cat {
-    const findIdx = this.findCatIndex(id);
-
-    return this.cats[findIdx];
+  findOne(id: string): Promise<Cat> {
+    return this.catRepository.findOne(id);
   }
 
-  update(id: string, updateCatDto: UpdateCatDto): Cat {
-    const findIndex = this.findCatIndex(id);
-
-    this.cats[findIndex] = {
-      ...this.cats[findIndex],
-      ...updateCatDto,
-    };
-
-    return this.cats[findIndex];
-  }
-
-  remove(id: string): void {
-    this.cats = this.cats.filter((cat) => cat.id !== id);
-  }
-
-  private findCatIndex(id: string, message = 'no cat'): number {
-    const findIdx = this.cats.findIndex((cat) => cat.id === id);
-
-    if (findIdx === -1) {
-      throw new HttpException(message, HttpStatus.NOT_FOUND);
+  async update(id: string, updateCatDto: UpdateCatDto): Promise<Cat> {
+    const findCat = await this.catRepository.findOne(id);
+    if (!findCat) {
+      throw new NotFoundException('no cat');
     }
 
-    return findIdx;
+    return this.catRepository.save({
+      ...findCat,
+      ...updateCatDto,
+    });
+  }
+
+  async remove(id: string): Promise<void> {
+    await this.catRepository.delete(id);
   }
 }

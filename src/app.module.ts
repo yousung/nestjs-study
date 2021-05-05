@@ -4,9 +4,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CatsModule } from './cats/cats.module';
 import { HealthController } from './health/health.controller';
+import { CommonModule } from './common/common.module';
 
 @Module({
-  imports: [CatsModule, TerminusModule],
+  imports: [CatsModule, TerminusModule, CommonModule],
   controllers: [AppController, HealthController],
   providers: [AppService],
 })

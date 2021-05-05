@@ -154,10 +154,13 @@
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Module } from &#x27;@nestjs/common&#x27;;
 import { CatsService } from &#x27;./cats.service&#x27;;
 import { CatsController } from &#x27;./cats.controller&#x27;;
+import { TypeOrmModule } from &#x27;@nestjs/typeorm&#x27;;
+import { Cat } from &#x27;./entities/cat.entity&#x27;;
 
 @Module({
+  imports: [TypeOrmModule.forFeature([Cat])],
   controllers: [CatsController],
-  providers: [CatsService]
+  providers: [CatsService],
 })
 export class CatsModule {}
 </code></pre>

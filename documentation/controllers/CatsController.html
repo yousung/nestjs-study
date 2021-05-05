@@ -82,6 +82,7 @@
                     <td class="col-md-4">
                         <ul class="index-list">
                             <li>
+                                    <span class="modifier">Async</span>
                                 <a href="#create">create</a>
                             </li>
                             <li>
@@ -120,6 +121,7 @@
                     <a name="create"></a>
                     <span class="name">
                         <b>
+                            <span class="modifier">Async</span>
                             create
                         </b>
                         <a href="#create"><span class="icon ion-ios-link"></span></a>
@@ -128,7 +130,8 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>create(createCatDto: <a href="../classes/CreateCatDto.html">CreateCatDto</a>)</code>
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>create(createCatDto: <a href="../classes/CreateCatDto.html">CreateCatDto</a>)</code>
                 </td>
             </tr>
 
@@ -136,14 +139,14 @@
                 <td class="col-md-4">
                     <b>Decorators : </b>
                     <br />
-                    <code>@Post()<br />@Redirect()<br /></code>
+                    <code>@Post()<br /></code>
                 </td>
             </tr>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="22"
-                            class="link-to-prism">src/cats/cats.controller.ts:22</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="20"
+                            class="link-to-prism">src/cats/cats.controller.ts:20</a></div>
                 </td>
             </tr>
 
@@ -180,7 +183,7 @@
                     <div>
                     </div>
                     <div class="io-description">
-                        <b>Returns : </b>    <code>{ url: string; }</code>
+                        <b>Returns : </b>    <code>{}</code>
 
                     </div>
                     <div class="io-description">
@@ -219,8 +222,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="30"
-                            class="link-to-prism">src/cats/cats.controller.ts:30</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="25"
+                            class="link-to-prism">src/cats/cats.controller.ts:25</a></div>
                 </td>
             </tr>
 
@@ -265,8 +268,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="35"
-                            class="link-to-prism">src/cats/cats.controller.ts:35</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="30"
+                            class="link-to-prism">src/cats/cats.controller.ts:30</a></div>
                 </td>
             </tr>
 
@@ -342,8 +345,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="46"
-                            class="link-to-prism">src/cats/cats.controller.ts:46</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="41"
+                            class="link-to-prism">src/cats/cats.controller.ts:41</a></div>
                 </td>
             </tr>
 
@@ -419,8 +422,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="40"
-                            class="link-to-prism">src/cats/cats.controller.ts:40</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="35"
+                            class="link-to-prism">src/cats/cats.controller.ts:35</a></div>
                 </td>
             </tr>
 
@@ -492,7 +495,6 @@
   Param,
   Delete,
   HttpCode,
-  Redirect,
 } from &#x27;@nestjs/common&#x27;;
 import { CatsService } from &#x27;./cats.service&#x27;;
 import { CreateCatDto } from &#x27;./dto/create-cat.dto&#x27;;
@@ -503,12 +505,8 @@ export class CatsController {
   constructor(private readonly catsService: CatsService) {}
 
   @Post()
-  @Redirect()
-  create(@Body() createCatDto: CreateCatDto) {
-    const cat &#x3D; this.catsService.create(createCatDto);
-    return {
-      url: &#x60;/cats/${cat.id}&#x60;,
-    };
+  async create(@Body() createCatDto: CreateCatDto) {
+    return await this.catsService.create(createCatDto);
   }
 
   @Get()
