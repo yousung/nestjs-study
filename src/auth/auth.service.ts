@@ -1,28 +1,46 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UserService } from '../user/user.service';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { LoginDto } from './dto/login.dto';
+import { CreateUserDto } from './dto/create-user.dto';
+import { PrismaService } from '../prisma.service';
 import { User } from '@prisma/client';
-import Any = jasmine.Any;
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
-  async signIn(
-    email: string,
-    pass: string,
-  ): Promise<{
+  async login(loginDto: LoginDto): Promise<{
     id: number;
     name: string;
     email: string;
   }> {
-    const user = await this.userService.findOne(email);
+    const user = await this.prismaService.user.findFirst({
+      where: {
+        email: loginDto.email,
+      },
+    });
 
-    if (user?.password !== pass) {
-      throw new UnauthorizedException();
+    if (!user) {
+      throw new NotFoundException('없는 이메일');
+    }
+
+    if (user?.password !== loginDto.password) {
+      throw new UnauthorizedException('비밀번호 틀림');
     }
 
     const { password, ...result } = user;
 
     return result;
+  }
+
+  async join(createUserDto: CreateUserDto): Promise<User> {
+    return this.prismaService.user.create({
+      data: {
+        ...createUserDto,
+      },
+    });
   }
 }
