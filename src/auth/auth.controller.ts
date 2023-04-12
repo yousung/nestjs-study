@@ -17,8 +17,16 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('join')
-  join(@Body(ValidationPipe) createUserDto: CreateUserDto): Promise<User> {
-    return this.authService.join(createUserDto);
+  async join(@Body(ValidationPipe) createUserDto: CreateUserDto): Promise<{
+    id: number;
+    name: string;
+    email: string;
+  }> {
+    const user: User = await this.authService.join(createUserDto);
+
+    const { password: string, ...result } = user;
+
+    return result;
   }
 
   @HttpCode(HttpStatus.OK)

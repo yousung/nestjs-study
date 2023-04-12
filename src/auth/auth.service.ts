@@ -7,6 +7,7 @@ import { LoginDto } from './dto/login.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { PrismaService } from '../prisma.service';
 import { User } from '@prisma/client';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class AuthService {
@@ -27,7 +28,7 @@ export class AuthService {
       throw new NotFoundException('없는 이메일');
     }
 
-    if (user?.password !== loginDto.password) {
+    if (!(await bcrypt.compare(loginDto.password, user.password))) {
       throw new UnauthorizedException('비밀번호 틀림');
     }
 
@@ -37,9 +38,15 @@ export class AuthService {
   }
 
   async join(createUserDto: CreateUserDto): Promise<User> {
+    const { name, email, password } = createUserDto;
+    const salt = await bcrypt.genSalt();
+    const hash: string = await bcrypt.hash(password, salt);
+
     return this.prismaService.user.create({
       data: {
-        ...createUserDto,
+        name,
+        email,
+        password: hash,
       },
     });
   }
